@@ -1,0 +1,9 @@
+[server]
+headless = true
+
+[runner]
+magicEnabled = false
+
+# Ensures the project root is always on PYTHONPATH when running via Streamlit
+[client]
+showErrorDetails = true
