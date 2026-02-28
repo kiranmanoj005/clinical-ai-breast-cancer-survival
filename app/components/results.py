@@ -12,13 +12,11 @@ def _kaplan_meier_estimate(survival_prob: float, risk: str) -> dict:
     """
     t = np.linspace(0, 60, 200)
 
-    # Shape the KM curve using a Weibull-style decay modulated by predicted probability
     scale_map = {"Low Risk": 0.008, "Moderate Risk": 0.022, "High Risk": 0.042}
     lam = scale_map.get(risk, 0.022)
     S_t = np.exp(-lam * t) * (survival_prob / 100)
     S_t = np.clip(S_t + (1 - survival_prob / 100) * np.exp(-0.003 * t), 0, 1)
 
-    # Confidence interval band (±5% noise, wider at later time)
     ci_width = 0.04 + 0.002 * t
     S_upper = np.clip(S_t + ci_width, 0, 1)
     S_lower = np.clip(S_t - ci_width, 0, 1)
@@ -39,19 +37,18 @@ def render_kaplan_meier(result: dict) -> None:
 
     fig = go.Figure()
 
-    # Confidence interval shading
+    # Minor fix: simple hex + "26" alpha suffix — no fragile string manipulation
     fig.add_trace(go.Scatter(
         x=np.concatenate([t, t[::-1]]),
         y=np.concatenate([S_upper, S_lower[::-1]]),
         fill="toself",
-        fillcolor=line_colour.replace(")", ", 0.15)").replace("rgb", "rgba") if "rgb" in line_colour else line_colour + "26",
+        fillcolor=line_colour + "26",
         line=dict(color="rgba(255,255,255,0)"),
         name="95% CI",
         showlegend=True,
         hoverinfo="skip"
     ))
 
-    # Main survival curve
     fig.add_trace(go.Scatter(
         x=t, y=S * 100,
         mode="lines",
@@ -60,7 +57,6 @@ def render_kaplan_meier(result: dict) -> None:
         hovertemplate="Month %{x:.0f}: %{y:.1f}% survival<extra></extra>"
     ))
 
-    # Reference 50% line
     fig.add_hline(
         y=50, line_dash="dash",
         line_color="#95a5a6", opacity=0.7,
@@ -97,7 +93,6 @@ def render_results(result: dict):
     st.markdown("---")
     st.markdown("### 📊 Prediction Results")
 
-    # ── Top KPI cards
     col1, col2, col3 = st.columns(3)
     with col1:
         label = "✅ Benign" if pred == 1 else "❌ Malignant"
@@ -112,7 +107,6 @@ def render_results(result: dict):
 
     col_left, col_right = st.columns(2)
 
-    # ── Gauge chart
     with col_left:
         st.markdown("#### Survival Probability Gauge")
         fig = go.Figure(go.Indicator(
@@ -140,7 +134,6 @@ def render_results(result: dict):
                           paper_bgcolor="rgba(0,0,0,0)")
         st.plotly_chart(fig, use_container_width=True)
 
-    # ── Probability breakdown bar
     with col_right:
         st.markdown("#### Class Probability Breakdown")
         probs = result["probabilities"]
@@ -161,12 +154,10 @@ def render_results(result: dict):
         )
         st.plotly_chart(fig2, use_container_width=True)
 
-    # ── Kaplan-Meier Survival Curve
     st.markdown("---")
     st.markdown("#### 📈 Survival Curve")
     render_kaplan_meier(result)
 
-    # ── Clinical interpretation
     st.markdown("#### 🏥 Clinical Interpretation")
     if risk == "Low Risk":
         st.success("🟢 **Low Risk** — The model predicts a favourable prognosis. The tumour features are consistent with a benign profile.")

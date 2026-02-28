@@ -1,7 +1,12 @@
+import os
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
+
+# Minor fix: only force the Agg backend when NOT running inside a GUI/notebook environment
+if os.environ.get("MPLBACKEND") is None and os.environ.get("DISPLAY") is None:
+    import matplotlib
+    matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import load_breast_cancer
@@ -48,7 +53,6 @@ def plot_feature_distributions(X: pd.DataFrame, y: pd.Series, output_dir: str = 
         ax.set_xlabel("")
         ax.legend(fontsize=6)
 
-    # Hide unused axes
     for j in range(len(features), len(axes)):
         axes[j].set_visible(False)
 
@@ -104,7 +108,6 @@ def load_and_preprocess(
     X = pd.DataFrame(data.data, columns=data.feature_names)
     y = pd.Series(data.target, name="target")
 
-    # Basic sanity checks
     assert X.isnull().sum().sum() == 0, "Unexpected nulls in dataset"
     assert len(X) == len(y), "Feature/label length mismatch"
 
