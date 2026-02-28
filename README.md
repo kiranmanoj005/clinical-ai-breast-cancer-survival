@@ -1,23 +1,53 @@
-# 🎗️ Clinical AI — Breast Cancer Survival Predictor
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.10-blue?style=flat-square&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.32-red?style=flat-square&logo=streamlit)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
+# 🎗️ Breast Cancer Survival Predictor
+### *Clinical AI — Explainable Machine Learning in Oncology*
 
-> An explainable AI web application that predicts breast cancer patient survival probability using clinical features — built with a full machine learning pipeline, SHAP explainability, and an interactive Streamlit interface.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Classifier-orange?style=for-the-badge)](https://xgboost.readthedocs.io)
+[![SHAP](https://img.shields.io/badge/SHAP-Explainability-purple?style=for-the-badge)](https://shap.readthedocs.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+<br/>
+
+> A fully interactive web application that predicts breast cancer survival probability from clinical biopsy features,
+> with explainable AI powered by SHAP and Kaplan‑Meier survival analysis.
+
+</div>
 
 ---
 
-## 🌟 Features
+## 📌 Overview
 
-- 🔬 **Clinical ML Pipeline** — Preprocessing, feature engineering, model training & evaluation
-- 🧠 **XGBoost Classifier** — High-performance gradient boosting model
-- 💡 **SHAP Explainability** — Understand *why* the model made each prediction
-- 📊 **Interactive EDA** — Visualise survival distributions, feature correlations, and more
-- 🌐 **Streamlit Web App** — Enter patient data and receive instant survival predictions
-- 📈 **Kaplan-Meier Survival Curves** — Clinical-grade survival analysis
-- 🏥 **Responsible AI** — Confidence scores, uncertainty estimates, and clinical disclaimers
+This project was built out of a shared interest in how AI can support clinical decision-making in oncology. We wanted to go beyond a standard classification notebook and build something that felt like a real clinical tool — one that doesn’t just give a prediction, but *explains* it in a way that would be meaningful to a clinician.
+
+The app takes biopsy measurements as input, runs them through a trained XGBoost pipeline, and returns a survival probability alongside SHAP-based explanations and a Kaplan‑Meier survival curve. Everything is wrapped in a clean Streamlit interface designed to feel approachable and trustworthy.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🤖 **XGBoost Classifier** | Gradient boosted tree model achieving 97.2% accuracy on held-out test data |
+| 💡 **SHAP Explainability** | Per-prediction feature attribution — see exactly what drove each outcome |
+| 📈 **Kaplan-Meier Curves** | Risk-stratified survival curves visualised interactively with 95% CI bands |
+| 🧪 **IQR Outlier Detection** | Automated outlier flagging with visual heatmap output |
+| 📊 **Full EDA Notebook** | Class balance, KDE distributions, correlation heatmap, ANOVA feature ranking |
+| 🏥 **Clinical Disclaimers** | Responsible AI framing throughout — not a diagnostic tool |
+| 🧪 **Unit Tested** | Pytest coverage on prediction pipeline outputs and model accuracy thresholds |
+
+---
+
+## 🖥️ App Preview
+
+The app has four sections accessible from the top navigation bar:
+
+- **Predict** — Adjust patient biopsy features in the sidebar and run a live prediction
+- **Explainability** — Global SHAP summary plot and top-10 feature importance bar chart
+- **Model Performance** — Accuracy, AUC-ROC, Precision, Recall and F1 with visual bar chart
+- **About** — Project background, tech stack and references
 
 ---
 
@@ -25,88 +55,74 @@
 
 ```
 clinical-ai-breast-cancer-survival/
-│
 ├── app/
-│   ├── main.py               # Streamlit web app entry point
-│   ├── predict.py            # Prediction logic & model loading
+│   ├── main.py                  # Streamlit entry point & layout
+│   ├── predict.py               # Pipeline loading & inference logic
 │   └── components/
-│       ├── sidebar.py        # Patient input sidebar
-│       ├── results.py        # Results display component
-│       └── explainability.py # SHAP visualisation component
-│
+│       ├── sidebar.py           # Patient demographic & biopsy inputs
+│       ├── results.py           # Gauge, KM curve & clinical interpretation
+│       └── explainability.py    # SHAP summary & feature importance plots
 ├── model/
-│   ├── train.py              # Model training script
-│   ├── evaluate.py           # Model evaluation & metrics
-│   └── pipeline.pkl          # Saved trained pipeline
-│
+│   ├── train.py                 # Model training & pipeline serialisation
+│   └── evaluate.py              # Confusion matrix, ROC & PR curves
 ├── data/
-│   ├── preprocess.py         # Data cleaning & feature engineering
-│   └── README.md             # Dataset information & sources
-│
+│   └── preprocess.py            # Outlier detection & distribution plots
 ├── notebooks/
-│   ├── 01_EDA.ipynb          # Exploratory Data Analysis
-│   ├── 02_Modelling.ipynb    # Model training & selection
-│   └── 03_Explainability.ipynb # SHAP analysis notebook
-│
+│   └── 01_EDA.ipynb             # Full exploratory data analysis
 ├── tests/
-│   └── test_predict.py       # Unit tests for prediction pipeline
-│
-├── requirements.txt          # Python dependencies
-├── .gitignore                # Git ignore rules
-└── README.md                 # This file
+│   └── test_predict.py          # Unit tests for prediction pipeline
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quickstart
 
-### 1. Clone the repository
+> Requires Python 3.10+ and [Homebrew](https://brew.sh) on macOS (for XGBoost’s OpenMP dependency).
+
 ```bash
+# macOS only — install OpenMP if not already present
+brew install libomp
+```
+
+```bash
+# 1. Clone
 git clone https://github.com/kiranmanoj005/clinical-ai-breast-cancer-survival.git
 cd clinical-ai-breast-cancer-survival
-```
 
-### 2. Create a virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# 2. Virtual environment
+python3 -m venv venv && source venv/bin/activate
+# Windows: venv\Scripts\activate
 
-### 3. Install dependencies
-```bash
+# 3. Dependencies
 pip install -r requirements.txt
-```
 
-### 4. Train the model
-```bash
+# 4. Train the model (first time only, ~10 seconds)
 python model/train.py
-```
 
-### 5. Launch the app
-```bash
+# 5. Launch
 streamlit run app/main.py
 ```
 
----
-
-## 📊 Dataset
-
-This project uses the **Wisconsin Breast Cancer Dataset** (via `sklearn.datasets`) for demonstration, with architecture designed to integrate the **METABRIC** or **SEER** clinical datasets for production use.
-
-| Feature | Description |
-|---|---|
-| Age | Patient age at diagnosis |
-| Tumour Size | Size of primary tumour (mm) |
-| Lymph Nodes | Number of positive lymph nodes |
-| Stage | Clinical cancer stage (I–IV) |
-| ER Status | Oestrogen receptor status |
-| PR Status | Progesterone receptor status |
-| HER2 Status | HER2 receptor status |
-| Treatment | Surgery / Chemotherapy / Radiotherapy |
+Open **http://localhost:8501** in your browser.
 
 ---
 
-## 🤖 Model Performance
+## 🧰 Tech Stack
+
+- **ML & Data** — scikit-learn, XGBoost, pandas, NumPy, SciPy
+- **Explainability** — SHAP (TreeExplainer)
+- **Survival Analysis** — lifelines (Kaplan-Meier)
+- **Visualisation** — Plotly, Seaborn, Matplotlib
+- **App** — Streamlit, streamlit-option-menu
+- **Testing** — pytest
+
+---
+
+## 🤖 Model
+
+The classifier is an **XGBoost gradient boosted tree** trained on the [Wisconsin Breast Cancer Diagnostic Dataset](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)) (569 samples, 30 features). All features describe cell nucleus properties computed from biopsy images (radius, texture, perimeter, area, smoothness, etc.).
 
 | Metric | Score |
 |---|---|
@@ -116,30 +132,28 @@ This project uses the **Wisconsin Breast Cancer Dataset** (via `sklearn.datasets
 | Recall | 97.6% |
 | F1 Score | 97.2% |
 
----
-
-## 🧠 Explainability
-
-This app uses **SHAP (SHapley Additive exPlanations)** to provide transparent, clinically interpretable predictions. Each prediction is accompanied by:
-- A **SHAP waterfall plot** showing individual feature contributions
-- A **SHAP summary plot** showing global feature importance
-- A **confidence score** and uncertainty range
+The full pipeline is: median imputation → standard scaling → XGBoost (300 estimators, lr=0.05, max_depth=4).
 
 ---
 
-## ⚠️ Clinical Disclaimer
+## ⚠️ Disclaimer
 
-> This tool is intended for **educational and research purposes only**. It is **not** a medical device and should **not** be used for clinical decision-making. Always consult a qualified healthcare professional.
+This project is intended **solely for educational and research purposes**. It is not a certified medical device, has not undergone clinical validation, and must not be used to inform real patient care. Always consult a qualified clinician.
 
 ---
 
 ## 👥 Authors
 
-- **Kiran** — ML Pipeline, Model Training, SHAP Explainability
-- **Amir** — Streamlit App, UI/UX, Data Preprocessing
+Built by **Kiran** and **Amir** as a clinical AI portfolio project.
+
+- **Kiran** — ML pipeline, model training, SHAP explainability, evaluation
+- **Amir** — Streamlit UI, patient input components, EDA notebook, survival curves
 
 ---
 
-## 📄 License
+## 📚 References
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+- Wolberg, W. et al. *Wisconsin Breast Cancer Dataset*, UCI ML Repository (1995)
+- Lundberg, S. & Lee, S-I. *A Unified Approach to Interpreting Model Predictions*, NeurIPS (2017)
+- Chen, T. & Guestrin, C. *XGBoost: A Scalable Tree Boosting System*, KDD (2016)
+- Davidson-Pilon, C. *lifelines: survival analysis in Python* (2019)
