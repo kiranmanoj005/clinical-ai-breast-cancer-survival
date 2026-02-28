@@ -4,26 +4,28 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
+from sklearn.pipeline import Pipeline
 
 
-def render_explainability(pipeline):
+def render_explainability(pipeline: Pipeline) -> None:
     """Render SHAP explainability visualisations."""
     data = load_breast_cancer()
     X = pd.DataFrame(data.data, columns=data.feature_names)
-    y = data.target
 
     st.markdown("#### 🌍 Global Feature Importance (SHAP Summary)")
     st.caption("SHAP values show each feature’s average contribution to the model output across all predictions.")
 
     with st.spinner("Computing SHAP values (this may take a moment)..."):
-        model = pipeline.named_steps["classifier"]
-        preprocessor = pipeline.named_steps["preprocessor"]
-        X_transformed = preprocessor.transform(X)
+        # Pipeline is now: imputer → scaler → classifier
+        # Transform data through all steps except the final classifier
+        X_transformed = X.copy()
+        for step_name, step in pipeline.steps[:-1]:
+            X_transformed = step.transform(X_transformed)
 
+        model = pipeline.named_steps["classifier"]
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(X_transformed)
 
-        # Summary plot
         fig, ax = plt.subplots(figsize=(10, 7))
         shap.summary_plot(
             shap_values, X_transformed,
