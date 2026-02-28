@@ -26,7 +26,7 @@ The app takes biopsy measurements as input, runs them through a trained XGBoost 
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---|---|
@@ -77,7 +77,7 @@ clinical-ai-breast-cancer-survival/
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
 > Requires Python 3.10+ and [Homebrew](https://brew.sh) on macOS (for XGBoost’s OpenMP dependency).
 
@@ -151,7 +151,7 @@ Built by **Kiran** and **Amir** as a clinical AI portfolio project.
 
 ---
 
-## 📚 References
+## References
 
 - Wolberg, W. et al. *Wisconsin Breast Cancer Dataset*, UCI ML Repository (1995)
 - Lundberg, S. & Lee, S-I. *A Unified Approach to Interpreting Model Predictions*, NeurIPS (2017)
