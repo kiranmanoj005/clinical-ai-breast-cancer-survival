@@ -2,6 +2,12 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
 import numpy as np
+import sys
+import os
+
+# Ensure project root is on the path (fixes ModuleNotFoundError when run via streamlit)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from app.components.sidebar import render_sidebar
 from app.components.results import render_results
 from app.components.explainability import render_explainability
