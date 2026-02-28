@@ -7,12 +7,14 @@ from model.train import build_and_train_pipeline
 
 MODEL_PATH = Path("model/pipeline.pkl")
 
+# Keys injected by sidebar demographics — not real model features
+_DEMOGRAPHIC_KEYS = {"__age__", "__stage__", "__er_status__", "__pr_status__", "__her2_status__"}
+
 
 def load_pipeline():
     """Load trained pipeline from disk, training if not yet saved."""
     if MODEL_PATH.exists():
         return joblib.load(MODEL_PATH)
-    # Auto-train on first run
     pipeline = build_and_train_pipeline()
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(pipeline, MODEL_PATH)
@@ -25,17 +27,19 @@ def predict_survival(pipeline, patient_data: dict) -> dict:
 
     Args:
         pipeline: Trained sklearn pipeline with predict_proba support.
-        patient_data: Dict of feature_name -> value.
+        patient_data: Dict of feature_name -> value (may include demographic keys).
 
     Returns:
-        Dict with keys: prediction, probability, confidence, risk_level, feature_vector
+        Dict with keys: prediction, survival_probability, risk_level, probabilities, feature_vector
     """
-    feature_vector = pd.DataFrame([patient_data])
+    # Critical fix: strip demographic sidebar keys before passing to the pipeline
+    model_features = {k: v for k, v in patient_data.items() if k not in _DEMOGRAPHIC_KEYS}
+
+    feature_vector = pd.DataFrame([model_features])
     proba = pipeline.predict_proba(feature_vector)[0]
     pred = pipeline.predict(feature_vector)[0]
 
-    survival_prob = proba[0] * 100  # class 0 = malignant => lower survival
-    # Remap: class 1 = benign = higher survival
+    # class 1 = Benign => higher survival probability
     survival_prob = proba[1] * 100
 
     risk_level = (
